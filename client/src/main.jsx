@@ -1,10 +1,11 @@
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom/dist";
+
 import { Login } from "./pages/Login";
 import SignUp from "./pages/SignUp";
-import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
-import Stores from "./pages/stores";
-import ListView from "./pages/ListView";
+import Stores from "./pages/Stores";
+import SingleList from "./pages/SingleList";
 import App from "./App";
 
 export const router = createBrowserRouter([
@@ -29,7 +30,7 @@ export const router = createBrowserRouter([
       },
       {
         path: ":listId",
-        element: <ListView />,
+        element: <SingleList />,
       },
     ],
   },
