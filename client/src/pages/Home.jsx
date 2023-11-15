@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import List from "../components/List";
 import Store from "../components/Store";
 import CreateListForm from "../components/CreateListForm";
 import { GET_USER } from "../utils/queries";
+import { DELETE_LIST, UNSAVE_STORE } from "../utils/mutations";
 import AuthService from "../utils/auth";
 
 export default function Home() {
   const [showPopup, setShowPopup] = useState(false);
   const [deleteListActive, setDeleteListActive] = useState(false);
-  const [unsaveStore, setUnsaveStore] = useState(false);
+  const [unsaveStoreActive, setUnsaveStoreActive] = useState(false);
 
   // GET USER
   const user = AuthService.getProfile();
@@ -33,6 +34,9 @@ export default function Home() {
     user: { fName, lName, lists, savedStores },
   } = data || {};
 
+  const [deleteList] = useMutation(DELETE_LIST);
+  const [unsaveStore] = useMutation(UNSAVE_STORE);
+
   // Event Listeners
   const handleNewListClick = () => {
     setShowPopup(true);
@@ -47,7 +51,30 @@ export default function Home() {
   };
 
   const handleUnsaveStoreToggle = () => {
-    setUnsaveStore(!unsaveStore);
+    setUnsaveStoreActive(!unsaveStoreActive);
+  };
+
+  // Database Event Listeners
+  const handleDeleteList = async (listId) => {
+    try {
+      await deleteList({
+        variables: { listId },
+        refetchQueries: [{ query: GET_USER, variables: { userId } }],
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleUnsaveStore = async (storeId) => {
+    try {
+      await unsaveStore({
+        variables: { userId, storeId },
+        refetchQueries: [{ query: GET_USER, variables: { userId } }],
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -93,6 +120,8 @@ export default function Home() {
                 title={list.title}
                 itemCount={list.listItems.length}
                 listId={list._id}
+                deleteListActive={deleteListActive}
+                handleDeleteList={handleDeleteList}
               />
             ))}
           </div>
@@ -117,7 +146,8 @@ export default function Home() {
                 img={store.image}
                 url={store.url}
                 name={store.name}
-                unsaveStore={unsaveStore}
+                unsaveStoreActive={unsaveStoreActive}
+                handleUnsaveStore={handleUnsaveStore}
               />
             ))}
           </div>

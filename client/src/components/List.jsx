@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function List({ title, itemCount, deleteListActive }) {
+export default function List({
+  title,
+  itemCount,
+  deleteListActive,
+  handleDeleteList,
+}) {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseOver = () => {
@@ -30,7 +35,10 @@ export default function List({ title, itemCount, deleteListActive }) {
         </p>
       </Link>
       {deleteListActive && (
-        <p className="text-red-500 text-center font-medium text-sm mt-1 hover:text-gray-300 transition-color duration-300 ease-in-out">
+        <p
+          className="text-red-500 text-center font-medium text-sm mt-1 hover:text-gray-300 transition-color duration-300 ease-in-out"
+          onClick={() => handleDeleteList(listId)}
+        >
           DELETE
         </p>
       )}

@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function Store({ img, url, name, unsaveStore }) {
+export default function Store({
+  img,
+  url,
+  name,
+  unsaveStoreActive,
+  handleUnsaveStore,
+}) {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseOver = () => {
@@ -37,9 +43,12 @@ export default function Store({ img, url, name, unsaveStore }) {
           </Link>
         )}
       </div>
-      {unsaveStore ? (
+      {unsaveStoreActive ? (
         // Render if unsaveStore is true
-        <p className="text-red-500 text-center font-medium text-sm mt-1 hover:text-gray-300 transition-color duration-300 ease-in-out">
+        <p
+          className="text-red-500 text-center font-medium text-sm mt-1 hover:text-gray-300 transition-color duration-300 ease-in-out"
+          onClick={() => handleUnsaveStore(listId)}
+        >
           UNSAVE
         </p>
       ) : (
