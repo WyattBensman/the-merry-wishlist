@@ -1,8 +1,47 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { CREATE_USER } from "../utils/mutations";
+import Auth from "../utils/auth";
 
 export function SignUpForm() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    fName: "",
+    lName: "",
+    email: "",
+    password: "",
+  });
+
+  // Mutation Hook
+  const [createUser] = useMutation(CREATE_USER);
+
+  // Handle input changes and update form data
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle Form Submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const { data } = await createUser({
+        variables: { ...formData },
+      });
+
+      Auth.login(data.createUser.token);
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <form className="md:w-2/5 w-3/4 border rounded px-12 py-16">
+    <form
+      className="md:w-2/5 w-3/4 border rounded px-12 py-16"
+      onSubmit={handleSubmit}
+    >
       <h1 className="text-4xl font-medium mb-2">Sign Up</h1>
       <h2 className="mb-10 italic text-sm">
         Take the first step in becoming a more organized individual!
@@ -21,6 +60,9 @@ export function SignUpForm() {
               type="text"
               id="fName"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              name="fName"
+              value={formData.fName}
+              onChange={handleInputChange}
               required
             />
           </div>
@@ -32,8 +74,11 @@ export function SignUpForm() {
               Last Name
             </label>
             <input
+              name="lName"
+              value={formData.lName}
+              onChange={handleInputChange}
               type="text"
-              id="fName"
+              id="lName"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               required
             />
@@ -49,6 +94,9 @@ export function SignUpForm() {
           Email
         </label>
         <input
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
           type="email"
           id="email"
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -64,6 +112,9 @@ export function SignUpForm() {
           Password
         </label>
         <input
+          name="password"
+          value={formData.password}
+          onChange={handleInputChange}
           type="password"
           id="password"
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"

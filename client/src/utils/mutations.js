@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 // LOGIN
 export const LOGIN_USER = gql`
-  mutation Login($email: String!, $password: String!) {
+  mutation login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       token
       user {
@@ -34,7 +34,7 @@ export const LOGIN_USER = gql`
 
 // CREATE USER
 export const CREATE_USER = gql`
-  mutation CreateUser(
+  mutation createUser(
     $fName: String!
     $lName: String!
     $email: String!
@@ -76,7 +76,7 @@ export const CREATE_USER = gql`
 
 // CREATE LIST
 export const CREATE_LIST = gql`
-  mutation CreateList($userId: ID!, $title: String!) {
+  mutation createList($userId: ID!, $title: String!) {
     createList(userId: $userId, title: $title) {
       _id
       userId
@@ -94,7 +94,7 @@ export const CREATE_LIST = gql`
 
 // DELETE LIST
 export const DELETE_LIST = gql`
-  mutation DeleteList($listId: ID!) {
+  mutation deleteList($listId: ID!) {
     deleteList(listId: $listId) {
       _id
       userId
@@ -112,10 +112,10 @@ export const DELETE_LIST = gql`
 
 // CREATE ITEM
 export const CREATE_ITEM = gql`
-  mutation CreateItem(
+  mutation createItem(
     $listId: ID!
     $itemName: String!
-    $itemPrice: Float!
+    $itemPrice: String!
     $itemSize: String
     $itemUrl: String!
   ) {
@@ -137,7 +137,7 @@ export const CREATE_ITEM = gql`
 
 // DELETE ITEM
 export const DELETE_ITEM = gql`
-  mutation DeleteItem($listId: ID!, $itemId: ID!) {
+  mutation deleteItem($listId: ID!, $itemId: ID!) {
     deleteItem(listId: $listId, itemId: $itemId) {
       _id
       itemName
@@ -149,8 +149,8 @@ export const DELETE_ITEM = gql`
 `;
 
 // SAVE STORE
-const SAVE_STORE = gql`
-  mutation SaveStore($userId: ID!, $storeId: ID!) {
+export const SAVE_STORE = gql`
+  mutation saveStore($userId: ID!, $storeId: ID!) {
     saveStore(userId: $userId, storeId: $storeId) {
       _id
       fName
@@ -168,7 +168,7 @@ const SAVE_STORE = gql`
 
 // UNSAVE STORE
 export const UNSAVE_STORE = gql`
-  mutation UnsaveStore($userId: ID!, $storeId: ID!) {
+  mutation unsaveStore($userId: ID!, $storeId: ID!) {
     unsaveStore(userId: $userId, storeId: $storeId) {
       _id
       fName

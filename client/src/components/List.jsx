@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function List({
+  listId,
   title,
   itemCount,
   deleteListActive,
@@ -19,8 +20,8 @@ export default function List({
 
   return (
     <div className="flex flex-col mr-4 ">
-      {/* THE "TO" NEEDS TO BE FIXED - IT'LL BE to={list._id} */}
       <Link
+        to={`/${listId}`}
         className={`w-52 px-5 py-3 border rounded transition duration-200 ${
           !deleteListActive ? "hover:shadow-md" : ""
         } bg-white`}
@@ -36,7 +37,7 @@ export default function List({
       </Link>
       {deleteListActive && (
         <p
-          className="text-red-500 text-center font-medium text-sm mt-1 hover:text-gray-300 transition-color duration-300 ease-in-out"
+          className="text-red-500 cursor-pointer text-center font-medium text-sm mt-1 hover:text-gray-300 transition-color duration-300 ease-in-out"
           onClick={() => handleDeleteList(listId)}
         >
           DELETE

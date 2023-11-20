@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { CREATE_ITEM } from "../utils/mutations";
+import { GET_LIST } from "../utils/queries";
+import { useMutation } from "@apollo/client";
 
-export default function CreateItemForm() {
+export default function CreateItemForm({ listId }) {
   const [showMessage, setShowMessage] = useState(false);
   const [formData, setFormData] = useState({
     itemName: "",
@@ -9,24 +12,45 @@ export default function CreateItemForm() {
     itemUrl: "",
   });
 
+  // CREATE ITEM
+  const [createItemMutation] = useMutation(CREATE_ITEM, {
+    refetchQueries: [{ query: GET_LIST, variables: { listId } }],
+  });
+
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setShowMessage(true);
-    setFormData({
-      itemName: "",
-      itemPrice: "",
-      itemSize: "",
-      itemUrl: "",
-    });
+    try {
+      await createItemMutation({
+        variables: {
+          listId,
+          itemName: formData.itemName,
+          itemPrice: formData.itemPrice,
+          itemSize: formData.itemSize,
+          itemUrl: formData.itemUrl,
+        },
+      });
 
-    setTimeout(() => {
-      setShowMessage(false);
-    }, 1000);
+      setShowMessage(true);
+
+      // Reset the form data after the mutation is completed
+      setFormData({
+        itemName: "",
+        itemPrice: "",
+        itemSize: "",
+        itemUrl: "",
+      });
+
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 1000);
+    } catch (error) {
+      console.error("Mutation error:", error.message);
+    }
   };
 
   return (
@@ -70,7 +94,9 @@ export default function CreateItemForm() {
           </label>
           <select
             name="itemSize"
+            onChange={handleInputChange}
             className="w-full px-4 py-2 border rounded-md shadow-sm text-secondary focus:outline-none"
+            value={formData.itemSize}
           >
             <option value="-">-</option>
             <option value="XS">XS</option>
@@ -81,13 +107,13 @@ export default function CreateItemForm() {
             <option value="2XL">2XL</option>
             <option value="-">-</option>
             {Array.from({ length: 19 }, (_, i) => i * 0.5 + 4).map((size) => (
-              <option key={size} value={size}>
+              <option key={size} value={`US Men ${size}`}>
                 U.S. Men's {size}
               </option>
             ))}
             <option value="-">-</option>
             {Array.from({ length: 19 }, (_, i) => i * 0.5 + 4).map((size) => (
-              <option key={size} value={size}>
+              <option key={size} value={`US Women ${size}`}>
                 U.S. Women's {size}
               </option>
             ))}

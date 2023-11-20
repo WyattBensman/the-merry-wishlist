@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 // USER
 export const GET_USER = gql`
-  query GetUser($userId: ID!) {
+  query user($userId: ID!) {
     user(userId: $userId) {
       _id
       fName
@@ -30,11 +30,10 @@ export const GET_USER = gql`
 `;
 
 // LIST
-const GET_LIST = gql`
-  query GetList($listId: ID!) {
+export const GET_LIST = gql`
+  query list($listId: ID!) {
     list(listId: $listId) {
       _id
-      userId
       title
       listItems {
         _id
@@ -48,8 +47,8 @@ const GET_LIST = gql`
 `;
 
 // STORES
-const GET_STORES = gql`
-  query GetStores {
+export const GET_STORES = gql`
+  query stores {
     stores {
       _id
       name

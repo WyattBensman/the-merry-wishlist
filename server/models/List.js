@@ -7,7 +7,7 @@ const itemSchema = new Schema({
     trim: true,
   },
   itemPrice: {
-    type: Number,
+    type: String,
     required: true,
     trim: true,
   },
@@ -62,7 +62,6 @@ const itemSchema = new Schema({
     ],
     trim: true,
   },
-
   itemUrl: {
     type: String,
     required: true,
@@ -72,7 +71,7 @@ const itemSchema = new Schema({
 
 const listSchema = new Schema({
   userId: {
-    type: SchemaTypesObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
   },
   title: {

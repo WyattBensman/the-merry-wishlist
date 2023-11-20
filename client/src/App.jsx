@@ -1,24 +1,31 @@
 import {
   ApolloClient,
   InMemoryCache,
-  ApolloProvider,
   createHttpLink,
+  ApolloProvider,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "./utils/AuthContext";
+
+// Importing Apollo Client development error messages
+import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
+
+// Check if in a development environment and load error messages
+if (process.env.NODE_ENV !== "production") {
+  loadDevMessages();
+  loadErrorMessages();
+}
 
 import Navbar from "./components/Navbar";
+import { useEffect } from "react";
 
-// Construct our main GraphQL API endpoint
 const httpLink = createHttpLink({
   uri: "/graphql",
 });
 
-// Construct request middleware that will attach the JWT token to every request as an `authorization` header
 const authLink = setContext((_, { headers }) => {
-  // get the authentication token from local storage if it exists
   const token = localStorage.getItem("id_token");
-  // return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
@@ -27,18 +34,33 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-const client = new ApolloClient({
-  // Set up our client to execute the `authLink` middleware prior to making the request to our GraphQL API
+export const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
 function App() {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Redirect to login if not authenticated
+    if (!isAuthenticated) {
+      console.log("User not authenticated - navigating to /login");
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!isAuthenticated) {
+    // Return null or a loading indicator if needed
+    return null;
+  }
+
   return (
-    <ApolloProvider client={client}>
+    <>
       <Navbar />
       <Outlet />
-    </ApolloProvider>
+    </>
   );
 }
 

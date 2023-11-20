@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
 import List from "../components/List";
 import Store from "../components/Store";
 import CreateListForm from "../components/CreateListForm";
@@ -14,11 +14,26 @@ export default function Home() {
 
   // GET USER
   const user = AuthService.getProfile();
-  const userId = user ? user._id : null;
+  const userId = user ? user.data._id : null;
 
-  const { loading, error, data } = useQuery(GET_USER, {
+  const { loading, error, data, refetch } = useQuery(GET_USER, {
     variables: { userId },
   });
+
+  // DELETE LIST
+  const [deleteListMutation] = useMutation(DELETE_LIST, {
+    refetchQueries: [{ query: GET_USER, variables: { userId } }],
+  });
+
+  // UNSAVE STORE
+  const [unsaveStoreMutation] = useMutation(UNSAVE_STORE, {
+    refetchQueries: [{ query: GET_USER, variables: { userId } }],
+  });
+
+  // Use useEffect for initial refetch of GET_USER
+  useEffect(() => {
+    refetch();
+  }, []);
 
   // Check for loading state
   if (loading) return <p>Loading...</p>;
@@ -33,9 +48,7 @@ export default function Home() {
   const {
     user: { fName, lName, lists, savedStores },
   } = data || {};
-
-  const [deleteList] = useMutation(DELETE_LIST);
-  const [unsaveStore] = useMutation(UNSAVE_STORE);
+  console.log(savedStores);
 
   // Event Listeners
   const handleNewListClick = () => {
@@ -54,26 +67,20 @@ export default function Home() {
     setUnsaveStoreActive(!unsaveStoreActive);
   };
 
-  // Database Event Listeners
   const handleDeleteList = async (listId) => {
     try {
-      await deleteList({
-        variables: { listId },
-        refetchQueries: [{ query: GET_USER, variables: { userId } }],
-      });
+      await deleteListMutation({ variables: { listId } });
+      refetch();
     } catch (error) {
-      console.error(error);
+      console.error("Error deleting list:", error);
     }
   };
 
   const handleUnsaveStore = async (storeId) => {
     try {
-      await unsaveStore({
-        variables: { userId, storeId },
-        refetchQueries: [{ query: GET_USER, variables: { userId } }],
-      });
+      await unsaveStoreMutation({ variables: { storeId } });
     } catch (error) {
-      console.error(error);
+      console.error("Error deleting list:", error);
     }
   };
 
@@ -122,6 +129,7 @@ export default function Home() {
                 listId={list._id}
                 deleteListActive={deleteListActive}
                 handleDeleteList={handleDeleteList}
+                userId={userId}
               />
             ))}
           </div>
@@ -129,13 +137,13 @@ export default function Home() {
             <h2 className="text-xl">My Stores</h2>
             <button
               className={`italic px-2 text-sm ms-2 rounded ${
-                unsaveStore
+                unsaveStoreActive
                   ? "bg-red-500 text-white hover:bg-red-700"
                   : "hover:bg-green-700 hover:text-white"
               } transition ease-in-out duration-200`}
               onClick={handleUnsaveStoreToggle}
             >
-              {unsaveStore ? "Cancel Unsave" : "Unsave Stores"}
+              {unsaveStoreActive ? "Cancel Unsave" : "Unsave Stores"}
             </button>
           </div>
           {/* SAVED STORES */}
@@ -155,7 +163,9 @@ export default function Home() {
       </div>
 
       {/* Popup Form */}
-      {showPopup && <CreateListForm handleClosePopup={handleClosePopup} />}
+      {showPopup && (
+        <CreateListForm handleClosePopup={handleClosePopup} userId={userId} />
+      )}
     </>
   );
 }

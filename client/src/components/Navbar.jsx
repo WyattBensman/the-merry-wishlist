@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import AuthService from "../utils/auth";
 
 export default function Navbar() {
   const [navbarOpen, setNavbarOpen] = useState(false);
+
+  const handleLogout = () => {
+    AuthService.logout();
+  };
 
   return (
     <nav className="bg-green-700 border-gray-200 md:flex px-4 py-6 sm:px-8 md:px-16 lg:px-20 xl:px-24">
@@ -46,6 +51,14 @@ export default function Navbar() {
             >
               Stores
             </NavLink>
+          </li>
+          <li>
+            <button
+              onClick={handleLogout}
+              className="block py-2 pl-3 pr-4 rounded text-red-400 hover:text-gray-300 md:border-0 md:p-0"
+            >
+              Logout
+            </button>
           </li>
         </ul>
       </div>

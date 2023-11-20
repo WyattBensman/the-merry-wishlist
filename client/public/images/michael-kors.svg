@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="401"
+   height="400"
+   viewBox="0 0 401.00001 400.00001"
+   id="svg4304"
+   version="1.1"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="Michael_Kors_(brand)_logo.svg">
+  <defs
+     id="defs4306">
+    <clipPath
+       id="clipPath4326"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4328"
+         d="M 0,800 H 600 V 0 H 0 Z" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="206.79065"
+     inkscape:cy="184.02144"
+     inkscape:document-units="px"
+     inkscape:current-layer="g4320"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1366"
+     inkscape:window-height="745"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4309">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-652.36216)">
+    <g
+       transform="matrix(1.25,0,0,-1.25,-95.37125,1406.7115)"
+       inkscape:label="michael_kors"
+       id="g4320">
+      <g
+         id="g4322"
+         transform="matrix(1.3469868,0,0,1.3504223,-190.59066,-208.93231)">
+        <g
+           clip-path="url(#clipPath4326)"
+           id="g4324">
+          <g
+             transform="translate(317.4971,388.1279)"
+             id="g4332">
+            <path
+               inkscape:connector-curvature="0"
+               id="path4334"
+               style="fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none"
+               d="m 0,0 c -34.721,0 -65.139,18.722 -81.729,46.588 h 18.854 l 0.401,48.335 20.948,-48.335 h 20.538 L -0.003,94.923 V 46.588 H 22.51 l 0.807,33.029 7.249,6.041 31.822,-39.07 H 81.723 C 65.133,18.722 34.719,0 0,0 M -83.823,139.836 V 50.277 c -7.16,13.358 -11.235,28.598 -11.235,44.781 0,16.181 4.075,31.429 11.235,44.778 M 0,190.111 c 34.83,0 65.325,-18.841 81.878,-46.854 H 58.764 L 23.719,110.63 v 32.627 H -6.083 L -30.652,83.242 -54.013,143.257 H -81.886 C -65.328,171.27 -34.83,190.111 0,190.111 M 95.052,95.058 c 0,-15.096 -3.553,-29.373 -9.839,-42.066 l -36.925,47.57 36.561,37.263 C 91.358,124.957 95.052,110.437 95.052,95.058 M 0,212.668 c -64.958,0 -117.616,-52.661 -117.616,-117.61 0,-64.955 52.658,-117.616 117.616,-117.616 64.949,0 117.61,52.661 117.61,117.616 0,64.949 -52.661,117.61 -117.61,117.61" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,28 +1,28 @@
 import { useMutation } from "@apollo/client";
-import { useHistory } from "react-router-dom";
-import { CREATE_LIST, GET_USER } from "../utils/mutations";
+import { CREATE_LIST } from "../utils/mutations";
+import { GET_USER } from "../utils/queries";
+import { useNavigate } from "react-router-dom";
 
-export default function CreateListForm({ handleClosePopup }) {
-  const history = useHistory();
-
+export default function CreateListForm({ handleClosePopup, userId }) {
+  const navigate = useNavigate();
   const [createList] = useMutation(CREATE_LIST, {
     refetchQueries: [{ query: GET_USER }],
     onCompleted: (data) => {
       const newListId = data.createList._id;
       // Navigate to the new list page using the generated list ID
-      history.push(`/lists/${newListId}`);
+      navigate(`/${newListId}`);
     },
   });
 
-  const handleCreateList = async (event) => {
-    event.preventDefault();
+  const handleCreateList = async (e) => {
+    e.preventDefault();
 
     // Access the input value
-    const title = event.target.title.value;
+    const title = e.target.title.value;
 
     try {
       await createList({
-        variables: { title },
+        variables: { title, userId },
       });
 
       handleClosePopup();
@@ -50,7 +50,6 @@ export default function CreateListForm({ handleClosePopup }) {
               required
             />
             <div className="flex justify-center mt-3">
-              {/* NEED TO MAKE IT SO THAT ONCE THE LIST IS CREATED, THE USER IS NAVIGATED INTO IT */}
               <button
                 type="submit"
                 className="bg-green-700 mr-2 px-2 py-1 rounded text-white font-medium hover:text-gray-200 hover:shadow-md duration-200"

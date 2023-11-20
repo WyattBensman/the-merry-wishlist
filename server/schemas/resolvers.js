@@ -7,8 +7,8 @@ const resolvers = {
     user: async (_, { userId }) => {
       try {
         const user = await User.findById(userId)
-          .populate("lists") // Populate the 'lists' field with associated lists
-          .populate("savedStores"); // Populate the 'savedStores' field with associated stores
+          .populate("lists")
+          .populate("savedStores");
 
         return user;
       } catch (error) {
@@ -19,11 +19,15 @@ const resolvers = {
     // GET LIST
     list: async (_, { listId }) => {
       try {
-        const list = await List.findById(listId)
-          .populate("userId")
-          .populate("listItems");
+        const list = await List.findById(listId).populate("listItems");
+
+        if (!list) {
+          throw new Error("List not found");
+        }
+
         return list;
       } catch (error) {
+        console.error(`Error fetching list: ${error.message}`);
         throw new Error(`Error fetching list: ${error.message}`);
       }
     },
@@ -42,7 +46,9 @@ const resolvers = {
   Mutation: {
     // LOGIN
     login: async (_, { email, password }) => {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email })
+        .populate("lists")
+        .populate("savedStores");
 
       if (!user) {
         throw new AuthenticationError();
@@ -84,8 +90,8 @@ const resolvers = {
       });
 
       await User.findByIdAndUpdate(
-        req.user._id, // Find user by their _id
-        { $addToSet: { lists: list._id } }, // Add post._id to user's posts array
+        req.user._id,
+        { $addToSet: { lists: list._id } },
         { new: true }
       );
 
@@ -100,7 +106,7 @@ const resolvers = {
 
       const list = await List.findByIdAndDelete(listId);
 
-      if (!list || list.author.toString() !== req.user._id) {
+      if (!list || list.userId.toString() !== req.user._id) {
         throw new Error(
           "List not found or you are not authorized to delete this post."
         );
@@ -108,7 +114,21 @@ const resolvers = {
 
       await User.findByIdAndUpdate(req.user._id, { $pull: { lists: listId } });
 
-      return list;
+      try {
+        // Attempt to fetch the updated user data after list deletion
+        const updatedUser = await User.findById(req.user._id).populate("lists");
+
+        if (!updatedUser) {
+          // If the user data is null, handle the situation accordingly
+          throw new Error("User data not found after list deletion.");
+        }
+
+        return updatedUser;
+      } catch (error) {
+        // Handle any errors that might occur during the fetching of updated user data
+        console.error("Error fetching updated user data:", error);
+        throw new Error("Error occurred during list deletion.");
+      }
     },
 
     // CREATE ITEM
@@ -141,7 +161,7 @@ const resolvers = {
         throw new Error("Post not found.");
       }
 
-      return newItem;
+      return updatedList;
     },
 
     // DELETE ITEM
