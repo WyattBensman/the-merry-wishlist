@@ -5,8 +5,8 @@ type User {
     lName: String
     email: String
     password: String
-    lists: [List]!
-    savedStores: [Store]!
+    lists: [List]
+    savedStores: [Store]
   }
   
   type List {
@@ -50,7 +50,7 @@ type User {
     createItem(listId: ID!, itemName: String!, itemPrice: String!, itemSize: String, itemUrl: String!): Item
     deleteItem(listId: ID!, itemId: ID!): Item
     saveStore(userId: ID!, storeId: ID!): User
-    unsaveStore(userId: ID!, storeId: ID!): User
+    unsaveStore(storeId: ID!): User
   }
 `;
 

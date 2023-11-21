@@ -199,7 +199,7 @@ const resolvers = {
         throw new AuthenticationError();
       }
 
-      return await User.findByIdAndUpdate(
+      const updatedUser = await User.findByIdAndUpdate(
         req.user._id,
         {
           $addToSet: { savedStores: storeId },
@@ -209,24 +209,42 @@ const resolvers = {
           runValidators: true,
         }
       );
+
+      // Find and return the updated store information
+      const updatedStore = updatedUser.savedStores.find(
+        (store) => store.toString() === storeId
+      );
+
+      return updatedStore;
     },
 
     // UNSAVE STORE
-    unsaveStore: async (_, { userId, storeId }, req) => {
+    unsaveStore: async (_, { storeId }, req) => {
       if (!req.user) {
         throw new AuthenticationError();
       }
 
-      return await User.findByIdAndUpdate(
-        req.user._id,
-        {
-          $pull: { savedStores: storeId },
-        },
-        {
-          new: true,
-          runValidators: true,
+      await User.findByIdAndUpdate(req.user._id, {
+        $pull: { savedStores: storeId },
+      });
+
+      try {
+        // Attempt to fetch the updated user data after list deletion
+        const updatedUser = await User.findById(req.user._id).populate(
+          "savedStores"
+        );
+
+        if (!updatedUser) {
+          // If the user data is null, handle the situation accordingly
+          throw new Error("User data not found after list deletion.");
         }
-      );
+
+        return updatedUser;
+      } catch (error) {
+        // Handle any errors that might occur during the fetching of updated user data
+        console.error("Error fetching updated user data:", error);
+        throw new Error("Error occurred during list deletion.");
+      }
     },
   },
 };

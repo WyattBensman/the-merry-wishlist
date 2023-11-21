@@ -78,9 +78,11 @@ export default function Home() {
 
   const handleUnsaveStore = async (storeId) => {
     try {
-      await unsaveStoreMutation({ variables: { storeId } });
+      await unsaveStoreMutation({
+        variables: { storeId },
+      });
     } catch (error) {
-      console.error("Error deleting list:", error);
+      console.error("Error unsaving store:", error);
     }
   };
 
@@ -154,6 +156,7 @@ export default function Home() {
                 img={store.image}
                 url={store.url}
                 name={store.name}
+                storeId={store._id}
                 unsaveStoreActive={unsaveStoreActive}
                 handleUnsaveStore={handleUnsaveStore}
               />

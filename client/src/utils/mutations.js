@@ -168,8 +168,8 @@ export const SAVE_STORE = gql`
 
 // UNSAVE STORE
 export const UNSAVE_STORE = gql`
-  mutation unsaveStore($userId: ID!, $storeId: ID!) {
-    unsaveStore(userId: $userId, storeId: $storeId) {
+  mutation unsaveStore($storeId: ID!) {
+    unsaveStore(storeId: $storeId) {
       _id
       fName
       lName

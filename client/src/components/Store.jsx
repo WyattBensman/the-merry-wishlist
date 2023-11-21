@@ -13,6 +13,7 @@ export default function Store({
   handleUnsaveStore,
 }) {
   const [isHovered, setIsHovered] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   // GET USER
   const user = AuthService.getProfile();
@@ -22,9 +23,7 @@ export default function Store({
 
   const handleSaveStore = async () => {
     try {
-      await saveStoreMutation({
-        variables: { userId: userId, storeId: storeId },
-      });
+      await saveStoreMutation({ variables: { userId, storeId: storeId } });
     } catch (error) {
       console.error("Error saving store:", error);
     }
@@ -36,6 +35,10 @@ export default function Store({
 
   const handleMouseLeave = () => {
     setIsHovered(false);
+  };
+
+  const handleIsSaved = () => {
+    setIsSaved(!isSaved);
   };
 
   return (
@@ -51,7 +54,6 @@ export default function Store({
           className={`w-100 h-100 ${
             isHovered ? "transition duration-200 filter brightness-50" : ""
           }`}
-          alt="name"
         />
         {/* STORE TITLE */}
         {isHovered && (
@@ -70,17 +72,20 @@ export default function Store({
       {unsaveStoreActive ? (
         // Render if unsaveStore is true
         <p
-          className="text-red-500 text-center font-medium text-sm mt-1 hover:text-gray-300 transition-color duration-300 ease-in-out"
-          onClick={() => handleUnsaveStore(storeId)}
+          className="text-red-500 text-center font-medium text-sm mr-4 mt-1 hover:text-gray-300 transition-color duration-300 ease-in-out"
+          onClick={() => handleUnsaveStore(storeId, userId)}
         >
           UNSAVE
         </p>
       ) : (
         <p
-          className="text-xs text-center cursor-pointer font-light mt-1 "
-          onClick={handleSaveStore}
+          className="text-xs text-center cursor-pointer font-light mr-4 mt-1 "
+          onClick={() => {
+            handleSaveStore();
+            handleIsSaved();
+          }}
         >
-          Save Store
+          {isSaved ? "Saved" : "Save Store"}
         </p>
       )}
     </div>
