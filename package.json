@@ -11,7 +11,7 @@
     "build": "cd client && npm run build"
   },
   "engines": {
-    "node": "14.x"
+    "node": "20.x"
   },
   "author": "Wyatt Bensman",
   "license": "ISC",
