@@ -67,35 +67,43 @@ const resolvers = {
 
     // CREATE USER
     createUser: async (_, { fName, lName, email, password }) => {
+      // Create User
       const user = await User.create({
         fName,
         lName,
         email,
         password,
       });
+
+      // Generate Token
       const token = signToken(user);
 
       return { token, user };
     },
 
     // CREATE LIST
-    createList: async (_, { title }, req) => {
+    createList: async (_, { title, userId }, req) => {
+      // Ensures authentication
       if (!req.user) {
         throw new AuthenticationError();
       }
 
-      const list = await List.create({
-        title,
-        userId: req.user._id,
-      });
+      try {
+        const list = await List.create({
+          title,
+          userId: req.user._id,
+        });
 
-      await User.findByIdAndUpdate(
-        req.user._id,
-        { $addToSet: { lists: list._id } },
-        { new: true }
-      );
+        await User.findByIdAndUpdate(
+          req.user._id,
+          { $addToSet: { lists: list._id } },
+          { new: true }
+        );
 
-      return list;
+        return list;
+      } catch (error) {
+        throw new Error(`Error creating list: ${error.message}`);
+      }
     },
 
     // DELETE LIST
@@ -106,7 +114,7 @@ const resolvers = {
 
       const list = await List.findByIdAndDelete(listId);
 
-      if (!list || list.userId.toString() !== req.user._id) {
+      if (!list) {
         throw new Error(
           "List not found or you are not authorized to delete this post."
         );
@@ -115,17 +123,14 @@ const resolvers = {
       await User.findByIdAndUpdate(req.user._id, { $pull: { lists: listId } });
 
       try {
-        // Attempt to fetch the updated user data after list deletion
         const updatedUser = await User.findById(req.user._id).populate("lists");
 
         if (!updatedUser) {
-          // If the user data is null, handle the situation accordingly
           throw new Error("User data not found after list deletion.");
         }
 
         return updatedUser;
       } catch (error) {
-        // Handle any errors that might occur during the fetching of updated user data
         console.error("Error fetching updated user data:", error);
         throw new Error("Error occurred during list deletion.");
       }
@@ -141,9 +146,10 @@ const resolvers = {
         throw new AuthenticationError();
       }
 
-      const list = await List.findById(listId);
+      // Check if the list exists and the user is authorized
+      const list = await List.findOne({ _id: listId, userId: req.user._id });
 
-      if (!list || list.userId.toString() !== req.user._id) {
+      if (!list) {
         throw new Error(
           "List not found or you are not authorized to add an item to it."
         );
