@@ -12,7 +12,7 @@
     "postinstall": "npm rebuild bcrypt"
   },
   "engines": {
-    "node": "20.x"
+    "node": "14.x"
   },
   "author": "Wyatt Bensman",
   "license": "ISC",
