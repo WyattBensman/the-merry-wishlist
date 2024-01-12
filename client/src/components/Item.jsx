@@ -53,7 +53,7 @@ export default function Item({
           target="_blank"
           className="w-3/4 text-center mt-2 py-1 px-2 border border-green-700 rounded hover:bg-green-700 hover:text-white duration-200"
         >
-          Visit Website
+          Visit Item
         </Link>
       </div>
     </div>
