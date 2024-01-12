@@ -33,7 +33,7 @@ export default function Item({
       </button>
       <div className="flex m-3 items-center">
         {/* IMAGE */}
-        <img src="./images/nike.jpeg" className="w-20 h-20 border" />
+        <img src="./images/christmas-gift.png" className="w-20 h-20 border" />
         {/* TITLE */}
         <h1 className="ms-3 font-medium">{itemName}</h1>
       </div>
