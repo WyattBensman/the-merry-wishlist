@@ -8,8 +8,7 @@
     "develop": "concurrently \"cd server && npm run start\" \"cd client && npm run dev\"",
     "install": "cd server && npm i && cd ../client && npm i",
     "seed": "cd server && npm run seed",
-    "build": "cd client && npm run build",
-    "postinstall": "npm rebuild bcrypt"
+    "build": "cd client && npm run build"
   },
   "engines": {
     "node": "20.x"

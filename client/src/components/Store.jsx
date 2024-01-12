@@ -1,33 +1,37 @@
-import { useMutation } from "@apollo/client";
-import { useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { SAVE_STORE } from "../utils/mutations";
+import { SAVE_STORE, UNSAVE_STORE } from "../utils/mutations";
+import { GET_USER } from "../utils/queries";
 import AuthService from "../utils/auth";
 
-export default function Store({
-  img,
-  url,
-  name,
-  storeId,
-  unsaveStoreActive,
-  handleUnsaveStore,
-}) {
+export default function Store({ img, url, name, storeId, unsaveStoreActive }) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [saveStoreActive, setSaveStoreActive] = useState(false);
 
   // GET USER
   const user = AuthService.getProfile();
   const userId = user ? user.data._id : null;
 
-  const [saveStoreMutation] = useMutation(SAVE_STORE);
+  // GET USER data to check if the current store is in the savedStores array
+  const { loading, error, data } = useQuery(GET_USER, {
+    variables: { userId },
+  });
 
-  const handleSaveStore = async () => {
-    try {
-      await saveStoreMutation({ variables: { userId, storeId: storeId } });
-    } catch (error) {
-      console.error("Error saving store:", error);
+  useEffect(() => {
+    if (!loading && data && data.user) {
+      const savedStoreIds = data.user.savedStores.map((store) => store._id);
+      setSaveStoreActive(savedStoreIds.includes(storeId));
     }
-  };
+  }, [loading, data, storeId]);
+
+  const [saveStoreMutation] = useMutation(SAVE_STORE, {
+    refetchQueries: [{ query: GET_USER, variables: { userId } }],
+  });
+
+  const [unsaveStoreMutation] = useMutation(UNSAVE_STORE, {
+    refetchQueries: [{ query: GET_USER, variables: { userId } }],
+  });
 
   const handleMouseOver = () => {
     setIsHovered(true);
@@ -37,8 +41,22 @@ export default function Store({
     setIsHovered(false);
   };
 
-  const handleIsSaved = () => {
-    setIsSaved(!isSaved);
+  const handleSaveStore = async () => {
+    try {
+      await saveStoreMutation({ variables: { userId, storeId } });
+      setSaveStoreActive(true);
+    } catch (error) {
+      console.error("Error saving store:", error);
+    }
+  };
+
+  const handleUnsaveStore = async () => {
+    try {
+      await unsaveStoreMutation({ variables: { storeId } });
+      setSaveStoreActive(false);
+    } catch (error) {
+      console.error("Error unsaving store:", error);
+    }
   };
 
   return (
@@ -62,30 +80,25 @@ export default function Store({
             target="_blank"
             className="absolute text-white text-xl font-medium flex flex-col items-center"
           >
-            <h1 className="text-white hover:text-gray-300 transition-color duration-300 ease-in-out">
+            <h1 className="text-white hover:text-gray-300 duration-300 ease-in-out">
               {name}
             </h1>
           </Link>
         )}
       </div>
-
-      {unsaveStoreActive ? (
-        // Render if unsaveStore is true
+      {saveStoreActive ? (
         <p
-          className="text-red-500 text-center font-medium text-sm mr-4 mt-1 hover:text-gray-300 transition-color duration-300 ease-in-out"
-          onClick={() => handleUnsaveStore(storeId, userId)}
+          className="text-red-500 text-center font-light text-xs mr-4 mt-1 hover:text-gray-300 duration-300 ease-in-out cursor-pointer"
+          onClick={handleUnsaveStore}
         >
           UNSAVE
         </p>
       ) : (
         <p
-          className="text-xs text-center cursor-pointer font-light mr-4 mt-1 "
-          onClick={() => {
-            handleSaveStore();
-            handleIsSaved();
-          }}
+          className="text-xs text-center cursor-pointer font-light mr-4 mt-1 hover:text-green-700 duration-300 ease-in-out"
+          onClick={handleSaveStore}
         >
-          {isSaved ? "Saved" : "Save Store"}
+          SAVE
         </p>
       )}
     </div>

@@ -21,6 +21,10 @@ export function LoginForm() {
     e.preventDefault();
 
     try {
+      // Log email and password
+      console.log("Email:", formData.email);
+      console.log("Password:", formData.password);
+
       const { data } = await login({
         variables: { ...formData },
       });
@@ -32,6 +36,7 @@ export function LoginForm() {
       navigate("/");
     } catch (error) {
       console.error(error);
+      console.log(error);
     }
   };
 

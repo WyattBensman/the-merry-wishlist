@@ -4,13 +4,12 @@ import List from "../components/List";
 import Store from "../components/Store";
 import CreateListForm from "../components/CreateListForm";
 import { GET_USER } from "../utils/queries";
-import { DELETE_LIST, UNSAVE_STORE } from "../utils/mutations";
+import { DELETE_LIST } from "../utils/mutations";
 import AuthService from "../utils/auth";
 
 export default function Home() {
   const [showPopup, setShowPopup] = useState(false);
   const [deleteListActive, setDeleteListActive] = useState(false);
-  const [unsaveStoreActive, setUnsaveStoreActive] = useState(false);
 
   // GET USER
   const user = AuthService.getProfile();
@@ -22,11 +21,6 @@ export default function Home() {
 
   // DELETE LIST
   const [deleteListMutation] = useMutation(DELETE_LIST, {
-    refetchQueries: [{ query: GET_USER, variables: { userId } }],
-  });
-
-  // UNSAVE STORE
-  const [unsaveStoreMutation] = useMutation(UNSAVE_STORE, {
     refetchQueries: [{ query: GET_USER, variables: { userId } }],
   });
 
@@ -48,7 +42,6 @@ export default function Home() {
   const {
     user: { fName, lName, lists, savedStores },
   } = data || {};
-  console.log(savedStores);
 
   // Event Listeners
   const handleNewListClick = () => {
@@ -63,26 +56,12 @@ export default function Home() {
     setDeleteListActive(!deleteListActive);
   };
 
-  const handleUnsaveStoreToggle = () => {
-    setUnsaveStoreActive(!unsaveStoreActive);
-  };
-
   const handleDeleteList = async (listId) => {
     try {
       await deleteListMutation({ variables: { listId } });
       refetch();
     } catch (error) {
       console.error("Error deleting list:", error);
-    }
-  };
-
-  const handleUnsaveStore = async (storeId) => {
-    try {
-      await unsaveStoreMutation({
-        variables: { storeId },
-      });
-    } catch (error) {
-      console.error("Error unsaving store:", error);
     }
   };
 
@@ -135,19 +114,7 @@ export default function Home() {
               />
             ))}
           </div>
-          <div className="flex">
-            <h2 className="text-xl">My Stores</h2>
-            <button
-              className={`italic px-2 text-sm ms-2 rounded ${
-                unsaveStoreActive
-                  ? "bg-red-500 text-white hover:bg-red-700"
-                  : "hover:bg-green-700 hover:text-white"
-              } transition ease-in-out duration-200`}
-              onClick={handleUnsaveStoreToggle}
-            >
-              {unsaveStoreActive ? "Cancel Unsave" : "Unsave Stores"}
-            </button>
-          </div>
+          <h2 className="text-xl">My Stores</h2>
           {/* SAVED STORES */}
           <div className="flex">
             {savedStores.map((store) => (
@@ -157,8 +124,6 @@ export default function Home() {
                 url={store.url}
                 name={store.name}
                 storeId={store._id}
-                unsaveStoreActive={unsaveStoreActive}
-                handleUnsaveStore={handleUnsaveStore}
               />
             ))}
           </div>
@@ -171,4 +136,17 @@ export default function Home() {
       )}
     </>
   );
+}
+
+{
+  /* <button
+              className={`italic px-2 text-sm ms-2 rounded ${
+                unsaveStoreActive
+                  ? "bg-red-500 text-white hover:bg-red-700"
+                  : "hover:bg-green-700 hover:text-white"
+              } transition ease-in-out duration-200`}
+              onClick={handleUnsaveStoreToggle}
+            >
+              {unsaveStoreActive ? "Cancel Unsave" : "Unsave Stores"}
+            </button> */
 }
